@@ -30,13 +30,13 @@ class MoviesController < ApplicationController
       end
 
       if @sorting == 'title'
-        @movies = Movie.order('title').where(rating: @ratings_to_show.keys)
+        @movies = Movie.order('title').where(rating: @ratings_to_show)
         @title_selected = selected
       elsif @sorting == 'release_date'
-        @movies = Movie.order("#{@sorting} ASC").with_ratings(rating: @ratings_to_show.keys)
+        @movies = Movie.order("#{@sorting} ASC").with_ratings(rating: @ratings_to_show)
         @release_selected = selected
       else
-        @movies = Movie.with_ratings(rating: @ratings_to_show.keys)
+        @movies = Movie.with_ratings(rating: @ratings_to_show)
       end
     end
   
