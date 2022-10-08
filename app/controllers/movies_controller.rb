@@ -29,14 +29,16 @@ class MoviesController < ApplicationController
         @sorting = session[:sort]
       end
 
+      ratings_hash = Hash[@ratings_to_show.collect {|rating| [rating, "1"]}]
+
       if @sorting == 'title'
-        @movies = Movie.order('title').where(rating: @ratings_to_show)
+        @movies = Movie.order('title').where(rating: ratings_hash.keys)
         @title_selected = selected
       elsif @sorting == 'release_date'
-        @movies = Movie.order("#{@sorting} ASC").with_ratings(rating: @ratings_to_show)
+        @movies = Movie.order("#{@sorting} ASC").with_ratings(rating: ratings_hash.keys)
         @release_selected = selected
       else
-        @movies = Movie.with_ratings(rating: @ratings_to_show)
+        @movies = Movie.with_ratings(rating: ratings_hash.keys)
       end
     end
   
