@@ -7,11 +7,37 @@ class MoviesController < ApplicationController
     end
   
     def index
-      @movies = []
-      @ratings_to_show = []
       @all_ratings = Movie.all_ratings
-      @movies = Movie.with_ratings(params[:ratings])
-      # puts params[:rating]
+      
+      if session[:ratings].nil?
+        @ratings_to_show = Movie.all_ratings
+        @sorting = nil
+        @title_selected = ""
+        @release_selected = ""
+      else
+        @ratings_to_show = params[:ratings] || Movie.all_ratings
+      end
+      
+      session[:ratings] = @ratings_to_show
+      @sorting = params[:sort]
+
+      selected = "hilite p-3 mb-2 bg-warning text-dark"
+
+      if !@sorting.nil?
+        session[:sort] = @sorting
+      else
+        @sorting = session[:sort]
+      end
+
+      if @sorting == 'title'
+        @movies = Movie.order('title').where(rating: @ratings_to_show.keys)
+        @title_selected = selected
+      elsif @sorting == 'release_date'
+        @movies = Movie.order("#{@sorting} ASC").with_ratings(rating: @ratings_to_show.keys)
+        @release_selected = selected
+      else
+        @movies = Movie.with_ratings(rating: @ratings_to_show.keys)
+      end
     end
   
     def new
